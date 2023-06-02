@@ -1,24 +1,53 @@
 const request = require('request');
+const fetchBreedDescription = (breed, callback) => {
+  request(`https://api.thecatapi.com/v1/breeds`, (error, response, body) => {
+    let result = "";
+    if (error) {
+      callback(error, null);
+    } else {
+      const data = JSON.parse(body);
+      data.forEach((d) => {
+        if (d.name == breed) {
+          result = d.description;
+          callback(null, d.description);
+        }
+      })
 
-const breed = process.argv.slice(2);
-
-
-request(`https://api.thecatapi.com/v1/breedds?search=${breed}`, function (error, response, body) {
-  console.error('error:', error); // Print the error if one occurred
-  console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-  //console.log('body:', body); // Print the HTML for the Google homepage.
-  const data = JSON.parse(body);
-  let result = "";
-  data.forEach((obj) => {
-    if (obj["name"] == breed) {
-      result = obj["description"];
-      console.log(result);
+      if (!result) {
+        callback(null, "Breed Not Found!")
+      }
     }
   });
-  if (result === "") {
-    console.log("Breed Not Found");
-  }
-  if (error) {
-    console.error("printing error:",error);
-  }
-});
+};
+
+
+
+// const fetchBreedDescription = (breed, callback) => {
+//     https.request(`https://api.thecatapi.com/v1/breeds?search=${breed}`, (error, response, body) => {
+//       const data = JSON.parse(body);
+//       //console.log(data);
+//       let result = "";
+//       for (const obj in data) {
+//         if (data[obj] == breed) {
+//           console.log(data[obj]);
+//         }
+//       }
+//       // data.forEach((obj) => {
+//       //   if (obj["name"] == breed) {
+//       //     result = obj["description"];
+//       //     return result;
+//       //   }
+//       // });
+//       // if (!result) {
+//       //   result = "Breed Not Found";
+//       //   return result;
+//       // }
+//       if (error) {
+//         return error;
+//       }
+//     })
+// }
+
+
+
+module.exports = {fetchBreedDescription : fetchBreedDescription }
